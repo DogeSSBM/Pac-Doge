@@ -131,11 +131,9 @@ void fillScreen()
 	fillRect(0,0,gfx.xlen,gfx.ylen);
 }
 
-void clear()
+void clearScreen()
 {
-	setColor(gfx.defaultColor);
 	SDL_RenderClear(gfx.renderer);
-	fillRect(0,0,gfx.xlen,gfx.ylen);
 }
 
 void draw()
@@ -180,8 +178,9 @@ void gfx_init(uint winXlen, uint winYlen)
 		gfx.ylen = winYlen;
 		gfx.defaultColor = BLACK;
 		SDL_SetRenderDrawBlendMode(gfx.renderer, SDL_BLENDMODE_BLEND);
-		clear();
+		clearScreen();
+		setColor(BLACK);
+		fillScreen();
 		draw();
-		clear();
 	}
 }

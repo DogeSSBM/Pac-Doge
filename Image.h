@@ -34,14 +34,22 @@ void freeImg(Img *image)
 		SDL_FreeSurface(image);
 }
 
-void drawImg(Img *image)
+void fillImg(Img *image)
 {
 	SDL_Texture *t = SDL_CreateTextureFromSurface(gfx.renderer, image);
 	SDL_RenderCopy(gfx.renderer, t, NULL, NULL);
 	SDL_DestroyTexture(t);
 }
 
-void loadDrawImg(const char *imgFile)
+void drawImg(Img *image, uint x, uint y, uint xlen, uint ylen)
+{
+	SDL_Texture *t = SDL_CreateTextureFromSurface(gfx.renderer, image);
+	Rect r = {x, y, xlen, ylen};
+	SDL_RenderCopy(gfx.renderer, t, NULL, &r);
+	SDL_DestroyTexture(t);
+}
+
+void loadFillImg(const char *imgFile)
 {
 	Img *img = IMG_Load(imgFile);
 	if(img == NULL){
@@ -51,6 +59,21 @@ void loadDrawImg(const char *imgFile)
 	}
 	SDL_Texture *t = SDL_CreateTextureFromSurface(gfx.renderer, img);
 	SDL_RenderCopy(gfx.renderer, t, NULL, NULL);
+	SDL_DestroyTexture(t);
+	SDL_FreeSurface(img);
+}
+
+void loadDrawImg(const char *imgFile, uint x, uint y, uint xlen, uint ylen)
+{
+	Img *img = IMG_Load(imgFile);
+	if(img == NULL){
+		printf("Failed to load file %s! Error:%s\n",
+			imgFile, IMG_GetError());
+		exit(0);
+	}
+	SDL_Texture *t = SDL_CreateTextureFromSurface(gfx.renderer, img);
+	Rect r = {x, y, xlen, ylen};
+	SDL_RenderCopy(gfx.renderer, t, NULL, &r);
 	SDL_DestroyTexture(t);
 	SDL_FreeSurface(img);
 }
