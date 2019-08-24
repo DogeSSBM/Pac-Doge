@@ -21,3 +21,5 @@
 #include "Text.h"
 #include "Image.h"
 #include "DogeUtil.h"
+
+#include "Draw.h"
