@@ -1,20 +1,20 @@
 #pragma once
 
-clock_t ClockPerMs = CLOCKS_PER_SEC / 1000;
+const u32 frameTime = 1000 / 30;
+u32 startTime;
 
-clock_t refTime;
-
-void resetTime()
+void markStartTime(void)
 {
-	refTime = clock();
+	startTime = SDL_GetTicks();
 }
 
-ull elapsedTime()
+u32 elapsedTime(void)
 {
-	return (ull)((clock() - refTime)/ClockPerMs);
+	return SDL_GetTicks() - startTime;
 }
 
-void delay(uint ms)
+u32 remainingTime(void)
 {
-	SDL_Delay(ms);
+	u32 eTime = elapsedTime();
+	return eTime > frameTime ? 0 : frameTime - eTime;
 }

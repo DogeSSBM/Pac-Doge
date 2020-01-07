@@ -17,6 +17,22 @@ typedef enum{
 	BLEND_MOD	= SDL_BLENDMODE_MOD
 }BlendMode;
 
+typedef enum{
+	FULLSCREEN	= SDL_WINDOW_FULLSCREEN,
+	BORDERLESS	= SDL_WINDOW_FULLSCREEN_DESKTOP,
+	WINDOWED	= 0
+}WindowMode;
+
+void setWindowMode(const WindowMode mode)
+{
+	SDL_SetWindowFullscreen(gfx.window, mode);
+}
+
+void setWindowSize(uint x, uint y)
+{
+	SDL_SetWindowSize(gfx.window, x, y);
+}
+
 void setBlend(BlendMode mode)
 {
 	SDL_SetRenderDrawBlendMode(gfx.renderer, mode);
@@ -131,9 +147,11 @@ void fillScreen()
 	fillRect(0,0,gfx.xlen,gfx.ylen);
 }
 
-void clearScreen()
+void clear()
 {
+	setColor(gfx.defaultColor);
 	SDL_RenderClear(gfx.renderer);
+	fillRect(0,0,gfx.xlen,gfx.ylen);
 }
 
 void draw()
@@ -148,7 +166,7 @@ void saveScreenshot(const char* file_name)
 	SDL_RenderReadPixels(gfx.renderer, NULL, SDL_PIXELFORMAT_ARGB8888,
 		sshot->pixels, sshot->pitch);
 	SDL_SaveBMP(sshot, file_name);
-	//SDL_FreeSurface(sshot);
+	SDL_FreeSurface(sshot);
 }
 
 void gfx_quit(void)
@@ -177,10 +195,9 @@ void gfx_init(uint winXlen, uint winYlen)
 		gfx.xlen = winXlen;
 		gfx.ylen = winYlen;
 		gfx.defaultColor = BLACK;
-		SDL_SetRenderDrawBlendMode(gfx.renderer, SDL_BLENDMODE_BLEND);
-		clearScreen();
-		setColor(BLACK);
-		fillScreen();
+		SDL_SetRenderDrawBlendMode(gfx.renderer, BLEND_NONE);
+		clear();
 		draw();
+		clear();
 	}
 }
