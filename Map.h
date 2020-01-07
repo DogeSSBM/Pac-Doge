@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAP_DEFAULT "Pac-Man"
+
 struct{
 	uint scale;
 	uint xlen;

@@ -28,6 +28,6 @@
 #endif
 #include "DogeUtil.h"
 
-#include "PacUtil.h"
 #include "Map.h"
 #include "Entity.h"
+#include "PacUtil.h"

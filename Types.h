@@ -38,3 +38,5 @@ typedef SDL_Color Color;
 typedef SDL_Surface Img;
 typedef SDL_Keycode Key;
 #endif
+
+typedef enum{DIR_U, DIR_R, DIR_D, DIR_L}Direction;
