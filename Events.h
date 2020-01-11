@@ -1,27 +1,45 @@
 #pragma once
+#define KEYNUM 4
 
-void handleKey(Key k)
+struct{
+	bool U;
+	bool D;
+	bool L;
+	bool R;
+}key;
+
+void keyDown(const Key k, const bool state)
 {
-	switch (k)
+	printf("Key %1u %c\n", (uint)k, state?'1':'0');
+	switch(k)
 	{
 	case SDLK_ESCAPE:
 		printf("Quitting now!\n");
 		exit(0);
 		break;
+	case SDLK_w:
 	case SDLK_UP:
-		printf("UP key pressed.\n");
+		key.U = state;
 		break;
+	case SDLK_s:
 	case SDLK_DOWN:
-		printf("DOWN key pressed.\n");
+		key.D = state;
 		break;
+	case SDLK_a:
 	case SDLK_LEFT:
-		printf("LEFT key pressed.\n");
+		key.L = state;
 		break;
+	case SDLK_d:
 	case SDLK_RIGHT:
-		printf("RIGHT key pressed.\n");
+		key.R = state;
+		break;
+	default:
+		printf("OTHER key pressed.\n");
 		break;
 	}
 }
+
+
 
 void events()
 {
@@ -29,15 +47,22 @@ void events()
 	SDL_Event event;
 	while (SDL_WaitEventTimeout(&event, remainingTime()))
 	{
+		bool state = true;
 		switch (event.type)
 		{
 		case SDL_QUIT:
 			printf("Quitting now!\n");
 			exit(0);
 			break;
+		case SDL_KEYUP:
+			state = false;
 		case SDL_KEYDOWN:
-			handleKey(event.key.keysym.sym);
+			if(event.key.repeat == 0)
+				keyDown(event.key.keysym.sym, state);
 			break;
+		// case SDL_KEYUP:
+		// 	keyUp(event.key.keysym.sym);
+		// 	break;
 		default:
 			break;
 		}

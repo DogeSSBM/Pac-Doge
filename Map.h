@@ -9,6 +9,18 @@ struct{
 	char **tile;
 }map;
 
+// screen window pixel to map index
+uint stm(const int a)
+{
+	return a < 0? 0 : a / map.scale;
+}
+
+// map index to screen window
+uint mts(const int a)
+{
+	return a < 0? 0 : a * map.scale;
+}
+
 void closeMap(void)
 {
 	if(map.tile == NULL)
@@ -29,7 +41,7 @@ void openMap(const char *mapFile)
 		printf("Closing current map\n");
 		closeMap();
 	}
-	printf("Opening map file \"mapFile\"\n");
+	printf("Opening map file \"%s\"\n", mapFile);
 	File *f = fopen(mapFile, "r");
 	if(f == NULL){
 		printf("Unable to open map file \"mapFile\"\n");
@@ -66,6 +78,7 @@ void openMap(const char *mapFile)
 		printf("\n");
 	}
 	fclose(f);
+	printf("Loaded map file \"%s\" successfully\n", mapFile);
 }
 
 void connectWall(const uint x, const uint y, const Direction dir, bool fill)

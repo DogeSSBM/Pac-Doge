@@ -39,4 +39,4 @@ typedef SDL_Surface Img;
 typedef SDL_Keycode Key;
 #endif
 
-typedef enum{DIR_U, DIR_R, DIR_D, DIR_L}Direction;
+typedef enum{DIR_U=0, DIR_R, DIR_D, DIR_L}Direction;
