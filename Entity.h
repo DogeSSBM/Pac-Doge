@@ -36,6 +36,18 @@ bool aligned(const uint x, const uint y)
 	return x % map.scale == 0 && y % map.scale == 0;
 }
 
+void printOnceAtAlligned(Entity *e)
+{
+	static bool lastaligned = false;
+	if(aligned(e->x,e->y)){
+		if(!lastaligned)
+			printf("Aligned at (%02u, %02u)\n", stm(e->x), stm(e->y));
+		lastaligned = true;
+	}else{
+		lastaligned = false;
+	}
+}
+
 bool traversable(const uint x, const uint y)
 {
 	return map.tile[x][y] != '#' && map.tile[x][y] != 'g';
@@ -43,47 +55,71 @@ bool traversable(const uint x, const uint y)
 
 void turnEntity(Entity *e)
 {
-	uint newx = stm(e->x);
-	uint newy = stm(e->y);
-	switch(e->turn) {
+	// reverse if needed
+	switch(e->facing) {
 		case DIR_U:
-			newy--;
-			printf("Turn U to (%02u,%02u)", newx, newy);
+			if(keyState.inverse.U && !keyState.U){
+				e->facing = (e->facing+2)%4;
+				break;
+			}
 			break;
 		case DIR_R:
-			newx++;
-			printf("Turn R to (%02u,%02u)", newx, newy);
+			if(keyState.inverse.R && !keyState.R){
+				e->facing = (e->facing+2)%4;
+				break;
+			}
 			break;
 		case DIR_D:
-			newy++;
-			printf("Turn D to (%02u,%02u)", newx, newy);
+			if(keyState.inverse.D && !keyState.D){
+				e->facing = (e->facing+2)%4;
+				break;
+			}
 			break;
 		case DIR_L:
-			newx--;
-			printf("Turn L to (%02u,%02u)", newx, newy);
+			if(keyState.inverse.L && !keyState.L){
+				e->facing = (e->facing+2)%4;
+				break;
+			}
 			break;
 	}
-	if(traversable(newx,newy)){
-		e->facing = e->turn;
-		printf(" success\n");
+
+	// turn at perp aligned points if needed
+	if(!aligned(e->x,e->y))
+		return;
+
+	uint newx = e->x;
+	uint newy = e->y;
+	if(UD(e->facing)){
+		if(keyState.L && !keyState.inverse.L){
+			newx--;
+			e->turn = DIR_L;
+		}else if(keyState.R){
+			newx+=map.scale;
+			e->turn = DIR_R;
+		}else{
+			return;
+		}
 	}else{
-		printf(" failure\n");
+		if(keyState.U && !keyState.inverse.U){
+			newy--;
+			e->turn = DIR_U;
+		}else if(keyState.D){
+			newy+=map.scale;
+			e->turn = DIR_D;
+		}else{
+			return;
+		}
 	}
+
+	if(!traversable(stm(newx),stm(newy)))
+		return;
+	e->facing = e->turn;
 }
 
 void moveEntity(Entity *e)
 {
-	static bool lastaligned = false;
-	if(aligned(e->x,e->y)){
-		if(!lastaligned)
-			printf("Alligned at (%02u, %02u)\n", stm(e->x), stm(e->y));
-		lastaligned = true;
-	}else{
-		lastaligned = false;
-	}
-
-	if(e->facing != e->turn)
-		turnEntity(e);
+	printOnceAtAlligned(e);
+	turnEntity(e);
 	uint newx = e->x;
 	uint newy = e->y;
 	switch(e->facing) {

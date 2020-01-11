@@ -1,6 +1,6 @@
 #pragma once
 
-const u32 frameTime = 1000 / 60;
+const u32 frameTime = 1000 / 120;
 u32 startTime;
 
 void markStartTime(void)

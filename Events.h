@@ -1,16 +1,33 @@
 #pragma once
 #define KEYNUM 4
 
-struct{
-	bool U;
-	bool D;
-	bool L;
-	bool R;
-}key;
+const union{
+	char arr[KEYNUM];
+	struct{
+		char U;
+		char R;
+		char D;
+		char L;
+	};
+}keyLabel = {'U','R','D','L'};
+
+union{
+	struct{
+		bool U;
+		bool R;
+		bool D;
+		bool L;
+	};
+	struct{
+		bool D;
+		bool L;
+		bool U;
+		bool R;
+	}inverse;
+}keyState={0};
 
 void keyDown(const Key k, const bool state)
 {
-	printf("Key %1u %c\n", (uint)k, state?'1':'0');
 	switch(k)
 	{
 	case SDLK_ESCAPE:
@@ -19,19 +36,23 @@ void keyDown(const Key k, const bool state)
 		break;
 	case SDLK_w:
 	case SDLK_UP:
-		key.U = state;
+		keyState.U = state;
+		printf("Key %c = %c\n",keyLabel.U,state?'1':'0');
 		break;
 	case SDLK_s:
 	case SDLK_DOWN:
-		key.D = state;
+		keyState.D = state;
+		printf("Key %c = %c\n",keyLabel.D,state?'1':'0');
 		break;
 	case SDLK_a:
 	case SDLK_LEFT:
-		key.L = state;
+		keyState.L = state;
+		printf("Key %c = %c\n",keyLabel.L,state?'1':'0');
 		break;
 	case SDLK_d:
 	case SDLK_RIGHT:
-		key.R = state;
+		keyState.R = state;
+		printf("Key %c = %c\n",keyLabel.R,state?'1':'0');
 		break;
 	default:
 		printf("OTHER key pressed.\n");
