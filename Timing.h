@@ -1,20 +1,13 @@
 #pragma once
+#define FPS		60
+#define FRAMETIME	(1000/FPS)
 
-const u32 frameTime = 1000 / 120;
-u32 startTime;
-
-void markStartTime(void)
+Epoch getEpoch(void)
 {
-	startTime = SDL_GetTicks();
+	return SDL_GetTicks();
 }
 
-u32 elapsedTime(void)
+u32 timeSince(Epoch e)
 {
-	return SDL_GetTicks() - startTime;
-}
-
-u32 remainingTime(void)
-{
-	u32 eTime = elapsedTime();
-	return eTime > frameTime ? 0 : frameTime - eTime;
+	return SDL_GetTicks() - e;
 }

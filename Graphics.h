@@ -1,4 +1,6 @@
 #pragma once
+#define WINX_DEFAULT (SCALE_DEFAULT*28)
+#define WINY_DEFAULT (SCALE_DEFAULT*31)
 
 struct{
 	uint xlen, ylen;
@@ -28,61 +30,63 @@ void setWindowMode(const WindowMode mode)
 	SDL_SetWindowFullscreen(gfx.window, mode);
 }
 
-void setWindowSize(uint x, uint y)
+void setWindowSize(const uint x, const uint y)
 {
+	gfx.xlen = x;
+	gfx.ylen = y;
 	SDL_SetWindowSize(gfx.window, x, y);
 }
 
-void setBlend(BlendMode mode)
+void setBlend(const BlendMode mode)
 {
 	SDL_SetRenderDrawBlendMode(gfx.renderer, mode);
 }
 
-void drawPixel(uint x, uint y)
+void drawPixel(const uint x, const uint y)
 {
 	SDL_RenderDrawPoint(gfx.renderer, x, y);
 }
 
-void drawLine(uint x1, uint y1, uint x2, uint y2)
+void drawLine(const uint x1, const uint y1, const uint x2, const uint y2)
 {
 	SDL_RenderDrawLine(gfx.renderer, x1, y1, x2, y2);
 }
 
-void drawHLine(uint x, uint y, int len)
+void drawHLine(const uint x, const uint y, const int len)
 {
 	SDL_RenderDrawLine(gfx.renderer, x, y, x+len, y);
 }
 
-void drawVLine(uint x, uint y, int len)
+void drawVLine(const uint x, const uint y, const int len)
 {
 	SDL_RenderDrawLine(gfx.renderer, x, y, x, y+len);
 }
 
-void drawRect(uint x, uint y, uint xlen, uint ylen)
+void drawRect(const uint x, const uint y, const uint xlen, const uint ylen)
 {
 	Rect r = {x, y, xlen, ylen};
 	SDL_RenderDrawRect(gfx.renderer, &r);
 }
 
-void fillRect(uint x, uint y, uint xlen, uint ylen)
+void fillRect(const uint x, const uint y, const uint xlen, const uint ylen)
 {
 	Rect r = {x, y, xlen, ylen};
 	SDL_RenderFillRect(gfx.renderer, &r);
 }
 
-void drawSquare(uint x, uint y, uint len)
+void drawSquare(const uint x, const uint y, const uint len)
 {
 	Rect r = {x, y, len, len};
 	SDL_RenderDrawRect(gfx.renderer, &r);
 }
 
-void fillSquare(uint x, uint y, uint len)
+void fillSquare(const uint x, const uint y, const uint len)
 {
 	Rect r = {x, y, len, len};
 	SDL_RenderFillRect(gfx.renderer, &r);
 }
 
-void fillBorder(uint x, uint y, uint xlen, uint ylen, int b)
+void fillBorder(const uint x, const uint y, const uint xlen, const uint ylen, const int b)
 {
 	fillRect(x-b, y-b, xlen+2*b, b);
 	fillRect(x-b, y+ylen, xlen+2*b, b);
@@ -90,9 +94,9 @@ void fillBorder(uint x, uint y, uint xlen, uint ylen, int b)
 	fillRect(x+xlen, y, b, ylen);
 }
 
-void drawCircle(uint x, uint y, uint radius)
+void drawCircle(const uint x, const uint y, const uint radius)
 {
-	uint rsq = radius*radius;
+	const uint rsq = radius*radius;
 	uint yoff = radius;
 	for(uint xoff = 0; xoff <= yoff; xoff++){
 		double yc = sqrt(rsq - (xoff+1)*(xoff+1));
@@ -111,9 +115,9 @@ void drawCircle(uint x, uint y, uint radius)
 	}
 }
 
-void fillCircle(uint x, uint y, uint radius)
+void fillCircle(const uint x, const uint y, const uint radius)
 {
-	uint rsq = radius*radius;
+	const uint rsq = radius*radius;
 	uint yoff = radius;
 	for(uint xoff = 0; xoff <= yoff; xoff++){
 		double yc = sqrt(rsq - (xoff+1)*(xoff+1));
@@ -127,27 +131,22 @@ void fillCircle(uint x, uint y, uint radius)
 	}
 }
 
-void setColor(Color c)
+void setColor(const Color c)
 {
 	SDL_SetRenderDrawColor(gfx.renderer, c.r, c.g, c.b, c.a);
 }
 
-void setRGB(u8 r, u8 g, u8 b)
+void setRGB(const u8 r, const u8 g, const u8 b)
 {
 	SDL_SetRenderDrawColor(gfx.renderer, r, g, b, 255);
 }
 
-void setRGBA(u8 r, u8 g, u8 b, u8 a)
+void setRGBA(const u8 r, const u8 g, const u8 b, const u8 a)
 {
 	SDL_SetRenderDrawColor(gfx.renderer, r, g, b, a);
 }
 
-void fillScreen()
-{
-	fillRect(0,0,gfx.xlen,gfx.ylen);
-}
-
-void clear()
+void blank()
 {
 	setColor(gfx.defaultColor);
 	SDL_RenderClear(gfx.renderer);
@@ -166,7 +165,7 @@ void saveScreenshot(const char* file_name)
 	SDL_RenderReadPixels(gfx.renderer, NULL, SDL_PIXELFORMAT_ARGB8888,
 		sshot->pixels, sshot->pitch);
 	SDL_SaveBMP(sshot, file_name);
-	SDL_FreeSurface(sshot);
+	//SDL_FreeSurface(sshot);
 }
 
 void gfx_quit(void)
@@ -179,7 +178,7 @@ void gfx_quit(void)
 	SDL_Quit();
 }
 
-void gfx_init(uint winXlen, uint winYlen)
+void gfx_init(const uint winXlen, const uint winYlen)
 {
 	srand(time(NULL));
 	if(SDL_Init(SDL_INIT_VIDEO)<0){
@@ -195,9 +194,9 @@ void gfx_init(uint winXlen, uint winYlen)
 		gfx.xlen = winXlen;
 		gfx.ylen = winYlen;
 		gfx.defaultColor = BLACK;
-		SDL_SetRenderDrawBlendMode(gfx.renderer, BLEND_NONE);
-		clear();
+		SDL_SetRenderDrawBlendMode(gfx.renderer, SDL_BLENDMODE_BLEND);
+		blank();
 		draw();
-		clear();
+		blank();
 	}
 }

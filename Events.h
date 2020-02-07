@@ -1,92 +1,92 @@
 #pragma once
-#define KEYNUM 4
 
-const union{
-	char arr[KEYNUM];
-	struct{
-		char U;
-		char R;
-		char D;
-		char L;
-	};
-}keyLabel = {'U','R','D','L'};
+uint4 key;
 
-union{
-	struct{
-		bool U;
-		bool R;
-		bool D;
-		bool L;
-	};
-	struct{
-		bool D;
-		bool L;
-		bool U;
-		bool R;
-	}inverse;
-}keyState={0};
+struct{
+	uint4 x;
+	uint4 y;
+	char4 keyChar;
+}keyLabel = {
+	.x = {
+		.U = WINX_DEFAULT-(WINX_DEFAULT/10),
+		.R = WINX_DEFAULT-(WINX_DEFAULT/10),
+		.D = WINX_DEFAULT-(WINX_DEFAULT/10),
+		.L = WINX_DEFAULT-(WINX_DEFAULT/10)
+	},
+	.y = {
+		.U = (WINY_DEFAULT/10)*1,
+		.R = (WINY_DEFAULT/10)*2,
+		.D = (WINY_DEFAULT/10)*3,
+		.L = (WINY_DEFAULT/10)*4
+	},
+	.keyChar = {
+		.U = 'U',
+		.R = 'R',
+		.D = 'D',
+		.L = 'L'
+	}
+};
 
-void keyDown(const Key k, const bool state)
+void keyChange(const Key k, const bool newState)
 {
-	switch(k)
-	{
+	switch(k){
 	case SDLK_ESCAPE:
 		printf("Quitting now!\n");
 		exit(0);
 		break;
-	case SDLK_w:
 	case SDLK_UP:
-		keyState.U = state;
-		printf("Key %c = %c\n",keyLabel.U,state?'1':'0');
+	case SDLK_w:
+		key.U = newState;
 		break;
-	case SDLK_s:
 	case SDLK_DOWN:
-		keyState.D = state;
-		printf("Key %c = %c\n",keyLabel.D,state?'1':'0');
+	case SDLK_s:
+		key.D = newState;
 		break;
-	case SDLK_a:
 	case SDLK_LEFT:
-		keyState.L = state;
-		printf("Key %c = %c\n",keyLabel.L,state?'1':'0');
+	case SDLK_a:
+		key.L = newState;
 		break;
-	case SDLK_d:
 	case SDLK_RIGHT:
-		keyState.R = state;
-		printf("Key %c = %c\n",keyLabel.R,state?'1':'0');
+	case SDLK_d:
+		key.R = newState;
 		break;
 	default:
-		printf("OTHER key pressed.\n");
+		printf("Unknown key pressed.\n");
 		break;
 	}
 }
 
-
-
 void events()
 {
-	markStartTime();
-	SDL_Event event;
-	while (SDL_WaitEventTimeout(&event, remainingTime()))
-	{
-		bool state = true;
-		switch (event.type)
-		{
+	static SDL_Event event;
+	while(SDL_PollEvent(&event)){
+		switch(event.type){
 		case SDL_QUIT:
 			printf("Quitting now!\n");
 			exit(0);
 			break;
-		case SDL_KEYUP:
-			state = false;
 		case SDL_KEYDOWN:
-			if(event.key.repeat == 0)
-				keyDown(event.key.keysym.sym, state);
+			if(!event.key.repeat)
+				keyChange(event.key.keysym.sym, true);
 			break;
-		// case SDL_KEYUP:
-		// 	keyUp(event.key.keysym.sym);
-		// 	break;
+		case SDL_KEYUP:
+			keyChange(event.key.keysym.sym, false);
+			break;
 		default:
 			break;
 		}
 	}
-	draw();
+	clearTerminal();
+	printf("Key %c %+4u.\n", keyLabel.keyChar.U, key.U);
+	printf("Key %c %+4u.\n", keyLabel.keyChar.D, key.D);
+	printf("Key %c %+4u.\n", keyLabel.keyChar.L, key.L);
+	printf("Key %c %+4u.\n", keyLabel.keyChar.R, key.R);
+	if(key.U)
+		key.U = (key.U+1)%1000;
+	if(key.D)
+		key.D = (key.D+1)%1000;
+	if(key.L)
+		key.L = (key.L+1)%1000;
+	if(key.R)
+		key.R = (key.R+1)%1000;
 }

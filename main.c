@@ -1,19 +1,27 @@
 #define DOGE_GFX
+#define SCALE_DEFAULT 32
 #include "Includes.h"
 
 int main(int argc, char const *argv[])
 {
-	parseArgs(argc, argv);
-	init(map.scale*map.xlen,map.scale*map.ylen);
-	initEntity();
+	gfx_init(WINX_DEFAULT, WINY_DEFAULT);
+	img_init();
+	text_init();
+	uint x = 0;
 	while(1){
-		moveEntity(&player);
-		clear();
-		drawMap();
-		drawEntity(&player);
-		draw();
+		Epoch frameStart = getEpoch();
+
+		setColor(BLACK);
+		fillCircle(x, 300, 100);
+
+		x = (x+1)%800;
+
+		setColor(RED);
+		fillCircle(x, 300, 100);
+
 		events();
+		draw();
+		while(timeSince(frameStart) < FRAMETIME);
 	}
-	closeMap();
 	return 0;
 }

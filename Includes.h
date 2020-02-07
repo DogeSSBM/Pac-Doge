@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include <limits.h>
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
@@ -16,6 +18,7 @@
 #endif
 #include "Types.h"
 #include "GetInt.h"
+#include "DogeUtil.h"
 #ifdef DOGE_GFX
 #include "Colors.h"
 #include "Graphics.h"
@@ -26,8 +29,3 @@
 #include "Text.h"
 #include "Image.h"
 #endif
-#include "DogeUtil.h"
-
-#include "Map.h"
-#include "Entity.h"
-#include "PacUtil.h"
